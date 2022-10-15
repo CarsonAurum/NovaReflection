@@ -1,3 +1,3 @@
 # NovaReflection
 
-A description of this package.
+A reflection framework providing enhanced type information for Swift types.
