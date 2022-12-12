@@ -27,7 +27,10 @@ public func createInstance<T>(constructor: ((PropertyInfo) throws -> Any)? = nil
 ///   - constructor: The custom constructor to use when initializing this value.
 /// - Returns: The generic/untyped value if iniitalization completed successfully.
 /// - Throws: ``ReflectionError/constructionError(type:)``
-public func createInstance(of type: Any.Type, constructor: ((PropertyInfo) throws -> Any)? = nil) throws -> Any {
+public func createInstance(
+    of type: Any.Type,
+    constructor: ((PropertyInfo) throws -> Any)? = nil
+) throws -> Any {
     if let defConstructor: DefaultConstructible.Type = -?>type {
         return defConstructor.init()
     }
@@ -41,7 +44,11 @@ public func createInstance(of type: Any.Type, constructor: ((PropertyInfo) throw
         throw ReflectionError.constructionError(type: type)
     }
 }
-func buildStruct(type: Any.Type, constructor: ((PropertyInfo) throws -> Any)? = nil) throws -> Any {
+
+func buildStruct(
+    type: Any.Type,
+    constructor: ((PropertyInfo) throws -> Any)? = nil
+) throws -> Any {
     let info = try typeInfo(of: type)
     let ptr = UnsafeMutableRawPointer.allocate(
         byteCount: info.size,
@@ -63,20 +70,19 @@ func buildClass(type: Any.Type) throws -> Any {
     try setProperties(typeInfo: info, pointer: .init(mutating: val))
     return -*>val
 }
-
 func setProperties(
     typeInfo: TypeInfo,
     pointer: UnsafeMutableRawPointer,
     constructor: ((PropertyInfo) throws -> Any)? = nil
 ) throws {
     try typeInfo.properties.forEach { property in
-        let val = try constructor.map { return try $0(property) } ?? defaultValue(of: property.type)
+        let val = try constructor.map { return try $0(property) }
+                    ?? defaultValue(of: property.type)
         let valPtr = pointer.advanced(by: property.offset)
         let sets = setters(type: property.type)
         sets.set(value: val, pointer: valPtr, initialize: true)
     }
 }
-
 func defaultValue(of type: Any.Type) throws -> Any {
     if let constructable: DefaultConstructible.Type = -?>type {
         return constructable.init()

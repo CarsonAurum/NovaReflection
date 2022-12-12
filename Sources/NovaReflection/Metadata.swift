@@ -91,9 +91,7 @@ protocol NominalMetadataType: MetadataType where Layout: NominalMetadataLayoutTy
 }
 
 extension NominalMetadataType {
-    var genericArgumentOffset: Int {
-        2
-    }
+    var genericArgumentOffset: Int { 2 }
     var isGeneric: Bool { (pointer.pointee.typeDescriptor.pointee.flags & 0x80) != 0 }
     mutating func mangledName() -> String {
         .init(cString: pointer.pointee.typeDescriptor.pointee.mangledName.advanced())
